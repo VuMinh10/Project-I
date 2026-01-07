@@ -1,5 +1,5 @@
 import networkx as nx
-import math
+import math #Thư viện toán học: gồm sin, cos, sqrt, radians…
 import time
 
 # --- Hàm tính khoảng cách "chim bay" (haversine) giữa 2 nút ---
