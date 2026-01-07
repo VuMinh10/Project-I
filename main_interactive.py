@@ -33,7 +33,7 @@ def create_base_map():
             }
         ).add_to(m)
 
-    # --- JAVASCRIPT ĐÃ SỬA LỖI ---
+    # --- JAVASCRIPT ---
     custom_js = """
     <script>
     document.addEventListener("DOMContentLoaded", function() {
