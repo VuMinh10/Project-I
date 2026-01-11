@@ -4,7 +4,7 @@ import geopandas as gpd
 import os
 
 def create_base_map():
-    print("⏳ Đang tạo bản đồ tương tác (Fix lỗi nút bấm)...")
+    print("Đang tạo bản đồ tương tác...")
     
     # Load boundary để lấy tâm bản đồ
     center_lat, center_lon = 21.01, 105.85 # Mặc định
@@ -27,8 +27,9 @@ def create_base_map():
             style_function=lambda x: {
                 "color": "#006400", 
                 "weight": 3, 
-                "fillColor": "#00FF00",
-                "fillOpacity": 0.1, 
+                #"fillColor": "#00FF00",
+                #"fillOpacity": 0.1,
+                "fill": False, 
                 "dashArray": "5, 5"
             }
         ).add_to(m)
@@ -62,7 +63,6 @@ def create_base_map():
             div.style.border = '2px solid #ccc';
             div.innerHTML = '🔁 Chọn lại';
             
-            // --- KHẮC PHỤC LỖI KHÔNG ẤN ĐƯỢC ---
             // Ngăn chặn sự kiện click trôi xuống bản đồ
             L.DomEvent.disableClickPropagation(div);
             
@@ -88,7 +88,7 @@ def create_base_map():
             if (points.length === 2) {
                 var popup = L.popup()
                     .setLatLng([lat, lon])
-                    .setContent("⏳ Đang tìm đường...")
+                    .setContent("Đang tìm đường...")
                     .openOn(mapObj);
                 
                 setTimeout(function(){
@@ -106,7 +106,6 @@ def create_base_map():
 
     os.makedirs("templates", exist_ok=True)
     m.save("templates/map_interactive.html")
-    print("✅ Đã sửa lỗi nút bấm trong templates/map_interactive.html")
 
 if __name__ == "__main__":
     create_base_map()

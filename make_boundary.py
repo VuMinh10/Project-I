@@ -5,7 +5,6 @@ import os
 # Tạo thư mục data nếu chưa có
 os.makedirs("data", exist_ok=True)
 
-# Tọa độ khớp với lệnh osmium trong báo cáo của bạn
 # osmium extract -b 105.83,21.00,105.87,21.05
 min_lon, min_lat, max_lon, max_lat = 105.83, 21.00, 105.87, 21.05
 
@@ -16,4 +15,4 @@ gdf = gpd.GeoDataFrame(index=[0], geometry=[geom], crs="EPSG:4326")
 
 # Lưu file
 gdf.to_file("data/boundary.geojson", driver="GeoJSON")
-print(f"✅ Đã tạo boundary.geojson: Hình vuông chuẩn ({min_lon}, {min_lat}) - ({max_lon}, {max_lat})")
+print(f"Đã tạo boundary.geojson: Hình vuông chuẩn ({min_lon}, {min_lat}) - ({max_lon}, {max_lat})")
