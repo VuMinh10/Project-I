@@ -62,7 +62,7 @@ def find_path_astar(G, origin, destination):
     queue = [(h_start, 0, origin, [origin])]
     
     visited = set()
-    min_dist = {origin: 0} # Lưu g_score tốt nhất
+    min_dist = {origin: 0} 
     nodes_visited_count = 0
 
     while queue:
@@ -98,6 +98,6 @@ def block_road(G, lat, lon):
     nearest_edge = min(G.edges(data=True), key=lambda e: math.hypot(G.nodes[e[0]]['y'] - lat, G.nodes[e[0]]['x'] - lon))
     u, v, data = nearest_edge
     print(f"Chặn đường giữa {u} và {v}")
-    G[u][v][0]["length"] *= 100  # tăng trọng số để coi như tắc đường
+    G[u][v][0]["length"] *= 100 
     return (u, v)
 '''
