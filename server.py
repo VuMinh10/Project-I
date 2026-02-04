@@ -3,13 +3,19 @@ import osmnx as ox
 import folium
 import geopandas as gpd
 from shapely.geometry import Point
+
 from pathfinding import find_path_astar, find_path_dijkstra
 import os
 import networkx as nx
 
+from geopy.geocoders import Nominatim
+
 app = Flask(__name__, template_folder='templates')
 
-# --- Hàm (mới) Lấy toạ độ chi tiết bám theo đường cong ---
+# --- Khởi tạo Geocoder ---
+geolocator = Nominatim(user_agent="routing_app_text_function")
+
+# --- Hàm lấy toạ độ chi tiết bám theo đường cong ---
 def get_path_geometry(G, path):
     if not path:
         return []
@@ -50,6 +56,17 @@ def get_path_geometry(G, path):
                 
     return route_coords
 
+def resolve_address(address_text):
+    try:
+        search_query = f"{address_text}, Hà Nội, Việt Nam"
+        location = geolocator.geocode(search_query)
+        if location:
+            return location.latitude, location.longitude
+        return None
+    except Exception as e:
+        print(f"Lỗi Geocoding: {e}")
+        return None
+
 # --- KHỞI TẠO DỮ LIỆU ---
 print("Đang khởi động Server...")
 if not os.path.exists("data/hbt_hk.graphml"):
@@ -70,6 +87,23 @@ def index():
         return "<h3>Lỗi: Hãy chạy main_interactive.py trước!</h3>"
     return render_template("map_interactive.html")
 
+@app.route("/search_address")
+def search_address():
+    start_str = request.args.get("start_str")
+    end_str = request.args.get("end_str")
+    
+    start_coord = resolve_address(start_str)
+    end_coord = resolve_address(end_str)
+    
+    if not start_coord:
+        return f"<h3>Không tìm thấy địa chỉ: {start_str}</h3><a href='/'>Quay lại</a>"
+    if not end_coord:
+        return f"<h3>Không tìm thấy địa chỉ: {end_str}</h3><a href='/'>Quay lại</a>"
+        
+    return redirect(url_for('route', 
+                            start_lat=start_coord[0], start_lon=start_coord[1],
+                            end_lat=end_coord[0], end_lon=end_coord[1]))
+
 @app.route("/route")
 def route():
     try:
@@ -78,7 +112,7 @@ def route():
         end_lat = float(request.args.get("end_lat"))
         end_lon = float(request.args.get("end_lon"))
 
-        # --- KIỂM TRA ĐIỂM CÓ NẰM TRONG VÙNG KHÔNG ---
+        # Kiểm tra điểm có nằm trong vùng không
         if boundary_gdf is not None:
             p_start = Point(start_lon, start_lat)
             p_end = Point(end_lon, end_lat)
@@ -97,7 +131,7 @@ def route():
         orig = ox.distance.nearest_nodes(G, start_lon, start_lat)
         dest = ox.distance.nearest_nodes(G, end_lon, end_lat)
 
-        # --- GỌI THUẬT TOÁN (Nhận 4 giá trị trả về) ---
+        # Gọi thuật toán
         path_a, cost_a, t_a, visited_a = find_path_astar(G, orig, dest)
         path_d, cost_d, t_d, visited_d = find_path_dijkstra(G, orig, dest)
 
@@ -130,7 +164,7 @@ def route():
         folium.Marker([start_lat, start_lon], popup="Start", icon=folium.Icon(color='green', icon='play')).add_to(m)
         folium.Marker([end_lat, end_lon], popup="End", icon=folium.Icon(color='red', icon='stop')).add_to(m)
 
-        # --- CẬP NHẬT BẢNG KẾT QUẢ ĐỂ HIỂN THỊ SỐ NÚT ---
+        # Cập nhập bảng kết quả
         html_metrics = f"""
         <div style="background-color: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-family: sans-serif; min-width: 250px;">
             <h4 style="margin: 0 0 10px 0; border-bottom: 1px solid #ccc; padding-bottom: 5px;">So sánh hiệu năng</h4>

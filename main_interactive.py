@@ -34,6 +34,52 @@ def create_base_map():
             }
         ).add_to(m)
 
+    # --- HTML UI FORM NHẬP ĐỊA CHỈ ---
+    search_html = """
+    <div style="
+        position: fixed; 
+        top: 20px; left: 50px; 
+        width: 300px;
+        background-color: white; 
+        z-index: 9999; 
+        padding: 15px; 
+        border-radius: 8px; 
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        font-family: Arial, sans-serif;">
+        
+        <h4 style="margin-top:0;">Tìm đường</h4>
+        
+        <div style="margin-bottom: 10px;">
+            <label style="font-size: 12px; font-weight: bold;">Điểm đi (Địa chỉ/Tên):</label>
+            <input type="text" id="start_addr" placeholder="VD: Nhà hát lớn Hà Nội" 
+                   style="width: 100%; padding: 5px; box-sizing: border-box; margin-top: 5px;">
+        </div>
+        
+        <div style="margin-bottom: 15px;">
+            <label style="font-size: 12px; font-weight: bold;">Điểm đến:</label>
+            <input type="text" id="end_addr" placeholder="VD: Hồ Hoàn Kiếm" 
+                   style="width: 100%; padding: 5px; box-sizing: border-box; margin-top: 5px;">
+        </div>
+        
+        <button onclick="searchByAddress()" style="
+            width: 100%; 
+            padding: 8px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold;">
+            Tìm đường ngay
+        </button>
+        
+        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+        
+        <small style="color: #666;">* Hoặc bấm trực tiếp 2 điểm trên bản đồ</small>
+    </div>
+    """
+    m.get_root().html.add_child(folium.Element(search_html))
+
     # --- JAVASCRIPT ---
     custom_js = """
     <script>
