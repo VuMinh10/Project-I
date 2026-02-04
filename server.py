@@ -113,6 +113,7 @@ def route():
         if boundary_gdf is not None:
              folium.GeoJson(
                 boundary_gdf.__geo_interface__,
+                name="Ranh giới",
                 style_function=lambda x: {"color": "green", "weight": 2, "fillOpacity": 0.0, "dashArray": "5, 5"}
             ).add_to(m)
 
